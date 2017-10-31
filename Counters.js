@@ -22,10 +22,8 @@ class Counter{
 
 //This moves the counter by redefining its position.   
     drag(newx, newy){
-            if(this.moving){
                 this.x=newx;
                 this.y=newy;
-            }
     }
     
     overlap(x, y){
@@ -43,9 +41,7 @@ class Counter{
     }
     
     highlight(){
-        if(this.highlighted){
             strokeWeight(6);
             stroke(251, 102, 17, this.alpha);
-        }
     }
 }
