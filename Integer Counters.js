@@ -22,8 +22,6 @@ function draw(){
     for(let i=0 ; i<l ; i++){
             
         push();
-        noStroke();
-        console.log(counters);
         if(l>0){
             if(counters[l-1].highlighted){
                if(i==toHighlight || i==l-1){
@@ -37,13 +35,13 @@ function draw(){
 //             if(counters[i].alpha <=0){
 //                 counters.splice(i, 1);
 //                 i--;
+// 		l = counters.length;
 //                 continue;
 //             }
         }
         counters[i].show();
         pop();
         l = counters.length;
-//         console.log(counters);
     }
     
 //  Move counter
