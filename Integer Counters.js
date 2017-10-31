@@ -42,7 +42,7 @@ function draw(){
         counters[i].show();
         pop();
         l = counters.length;
-        console.log(counters);
+//         console.log(counters);
     }
     
 //  Move counter
