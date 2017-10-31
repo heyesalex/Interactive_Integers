@@ -16,6 +16,7 @@ function setup() {
 }
 
 function draw(){
+	
     background(255);    
     
     for(let i=0 ; i<l ; i++){
@@ -26,18 +27,18 @@ function draw(){
         if(l>0){
             if(counters[l-1].highlighted){
                if(i==toHighlight || i==l-1){
-                   strokeWeight(6);
-                   stroke(251, 102, 17);
+                   counters[i].highlight();
                }
             }
         }
+	    
         if(counters[i].fading){
                 counters[i].fade();
-            if(counters[i].alpha <=0){
-                counters.splice(i, 1);
-                i--;
-                continue;
-            }
+//             if(counters[i].alpha <=0){
+//                 counters.splice(i, 1);
+//                 i--;
+//                 continue;
+//             }
         }
         counters[i].show();
         pop();
