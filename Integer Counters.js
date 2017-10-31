@@ -16,7 +16,6 @@ function setup() {
 }
 
 function draw(){
-	
     background(255);    
     
     for(let i=0 ; i<l ; i++){
@@ -29,19 +28,20 @@ function draw(){
                }
             }
         }
-	    
+        
         if(counters[i].fading){
-                counters[i].fade();
-//             if(counters[i].alpha <=0){
-//                 counters.splice(i, 1);
-//                 i--;
-// 		l = counters.length;
-//                 continue;
-//             }
+            noStroke();
+            counters[i].fade();
+            if(counters[i].alpha <=0){
+                counters.splice(i, 1);
+                i--;
+                l=counters.length;
+                pop();
+                continue;
+            }
         }
         counters[i].show();
         pop();
-        l = counters.length;
     }
     
 //  Move counter
