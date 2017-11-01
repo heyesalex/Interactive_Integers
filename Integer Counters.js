@@ -107,17 +107,17 @@ function draw(){
             counters[l-1].drag(mouseX+dx, mouseY+dy);
         }
         
-        if(counters[l-1].x<=0){
-            counters[l-1].x = 0;
+        if(counters[l-1].x<=r+1){
+            counters[l-1].x = r+1;
         }
-        if(counters[l-1].x>=width){
-            counters[l-1].x = width;
+        if(counters[l-1].x>=width-r-1){
+            counters[l-1].x = width-r-1;
         }
-        if(counters[l-1].y<=0){
-            counters[l-1].y = 0;
+        if(counters[l-1].y<=r+1){
+            counters[l-1].y = r+1;
         }
-        if(counters[l-1].y>=height){
-            counters[l-1].y = height;
+        if(counters[l-1].y>=height-r-1){
+            counters[l-1].y = height-r-1;
         }      
     }
     
