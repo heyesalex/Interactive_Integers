@@ -1,5 +1,5 @@
-var initRed = 2;
-var initBlue = 2;
+var initRed = 0;
+var initBlue = 0;
 var setWidth = 640;
 var setHeight = 300;
 var r = 40;
