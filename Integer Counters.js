@@ -76,12 +76,14 @@ function draw(){
         
 //Update red and blue count for display.
         if(displayEquation){
-            if(counters[i].R==255){
-                dispA++;
-            }
-            if(counters[i].B==255){
-                dispB++;
-            }
+		if(counters[i].alpha == 255){	
+		    if(counters[i].R==255){
+			dispA++;
+		    }
+		    if(counters[i].B==255){
+			dispB++;
+		    }
+		}
         }
     }
     
