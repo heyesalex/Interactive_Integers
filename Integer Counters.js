@@ -157,7 +157,7 @@ function mousePressed(){
             }
         }
 //If not moving counters, add a counter - colour is toggleable
-        if(addCounters && mouseX >= r+1 && mouseX <= width - r - 1 && mouseY >= r+1 && mouseY <= height-r-1){
+        if(addCounters && mouseX>=r+1 && mouseX<=width-r-1 && mouseY>=r+1 && mouseY<=height-r-1){
             if(l==0 || !counters[l-1].moving){
                 if(addRed){
                     let c = new Counter(mouseX, mouseY, r, 255, 0, 0);
