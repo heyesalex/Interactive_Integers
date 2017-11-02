@@ -11,6 +11,7 @@ let dispB = initBlue;
 let dispTot = dispA-dispB;
 var h1;
 var addRed = true;
+var colourButton;
 
 
 function setup() {
@@ -28,19 +29,40 @@ function setup() {
         l = counters.push(c);
     }
     
+    if(toggleColour){
+        colourButton = createButton('Add Blue Counters');
+        colourButton.style('background-colour', (255, 0, 0));
+        colourButton.style('colour', 'white');
+        colourButton.style('text-align', 'center');
+        colourButton.style('display', 'inline-block');
+        colourButton.style('font-size', '20px');
+        colourButton.mousePressed(changeColour)
+    }
+
+    
 //Define Equation Display as html element
     if(displayEquation){
         h1 = createElement('h1' , dispA+'+(-'+dispB + ')=' + dispTot);    
     }
+    
 }
 
-
-
+if(toggleColour){
+    function changeColour(){
+        addRed = !addRed;
+        if(addRed){
+         colourButton.html('Add Blue Counters');
+        } else {
+         colourButton.html('Add Red Counters');
+        }
+    }
+}
 
 
 function draw(){
     
     background(255);    
+    cursor(ARROW);
     
 //Looking at each counter in the array in turn, from bottom to top.
     for(let i=0 ; i<l ; i++){
@@ -71,19 +93,25 @@ function draw(){
         }
             
 //Draw counters.
+        if(counters[i].touching(mouseX, mouseY)){
+            cursor(HAND)
+               }
+        if(counters[l-1].moving){
+            cursor(MOVE)
+        }
         counters[i].show();
         pop();
         
 //Update red and blue count for display.
         if(displayEquation){
-		if(counters[i].alpha == 255){	
-		    if(counters[i].R==255){
-			dispA++;
-		    }
-		    if(counters[i].B==255){
-			dispB++;
-		    }
-		}
+            if(counters[i].alpha == 255){	
+                if(counters[i].R==255){
+                    dispA++;
+                }
+                if(counters[i].B==255){
+                    dispB++;
+                }
+            }
         }
     }
     
@@ -118,7 +146,7 @@ function draw(){
         }
         if(counters[l-1].y>=height-r-1){
             counters[l-1].y = height-r-1;
-        }      
+        }       
     }
     
  //Check if overlapping. Set highlighting as true, set toHighlight as i, and break.
@@ -156,8 +184,7 @@ function mousePressed(){
                 break;
             }
         }
-//If not moving counters, add a counter - colour is toggleable
-        if(addCounters && mouseX>r+1 && mouseX<width-r-1 && mouseY>r+1 && mouseY<height-r-1){
+        if(addCounters && mouseX>=r+1 && mouseX<=width-r-1 && mouseY>=r+1 && mouseY<=height-r-1){
             if(l==0 || !counters[l-1].moving){
                 if(addRed){
                     let c = new Counter(mouseX, mouseY, r, 255, 0, 0);
