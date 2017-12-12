@@ -1,14 +1,13 @@
-let counters=[];
-//let r=40;
-let dx;
-let dy;
-let l = counters.length;
-let toHighlight;
-let toFade;
-let oneZero;
-let dispA = initRed;
-let dispB = initBlue;
-let dispTot = dispA-dispB;
+var counters=[];
+var dx;
+var dy;
+var l = counters.length;
+var toHighlight;
+var toFade;
+var oneZero;
+var dispA = settings.initRed;
+var dispB = settings.initBlue;
+var dispTot = dispA-dispB;
 var h1;
 var addRed = true;
 var colourButton;
@@ -16,9 +15,11 @@ var colourButton;
 
 function setup() {
 	createCanvas(setWidth, setHeight);
-    
+	let tot = settings.initRed+settings.initBlue;
+	
 //Define initial array of counters    
-    for(let i=0 ; i< initRed+initBlue ; i++){
+    for(let i=0 ; i< tot; i++){
+	   
         let col;
         if(i<initRed){
             col = 0;
@@ -29,7 +30,7 @@ function setup() {
         l = counters.push(c);
     }
     
-    if(toggleColour){
+    if(settings.addCounters){
         colourButton = createButton('Add Blue Counters');
         colourButton.style('background-colour', (255, 0, 0));
         colourButton.style('colour', 'white');
@@ -41,7 +42,7 @@ function setup() {
 
     
 //Define Equation Display as html element
-    if(displayEquation){
+    if(settings.displayEquation){
         h1 = createElement('h1' , dispA+'+(-'+dispB + ')=' + dispTot);    
     }
     
@@ -103,7 +104,7 @@ function draw(){
         pop();
         
 //Update red and blue count for display.
-        if(displayEquation){
+        if(settings.displayEquation){
             if(counters[i].alpha == 255){	
                 if(counters[i].R==255){
                     dispA++;
@@ -116,7 +117,7 @@ function draw(){
     }
     
 //Update displayed equation
-    if(displayEquation){
+    if(settings.displayEquation){
         dispTot = dispA - dispB;
         if(dispB==0){
             h1.html(dispA+'+'+dispB + '=' + dispTot)
