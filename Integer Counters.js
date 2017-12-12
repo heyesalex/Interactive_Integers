@@ -48,7 +48,7 @@ function setup() {
     
 }
 
-if(toggleColour){
+if(settings.addCounters){
     function changeColour(){
         addRed = !addRed;
         if(addRed){
