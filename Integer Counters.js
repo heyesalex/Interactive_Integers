@@ -21,7 +21,7 @@ function setup() {
     for(let i=0 ; i< tot; i++){
 	   
         let col;
-        if(i<initRed){
+        if(i<settings.initRed){
             col = 0;
         } else {
             col = 1;
@@ -185,7 +185,7 @@ function mousePressed(){
                 break;
             }
         }
-        if(addCounters && mouseX>=r+1 && mouseX<=width-r-1 && mouseY>=r+1 && mouseY<=height-r-1){
+        if(settings.addCounters && mouseX>=r+1 && mouseX<=width-r-1 && mouseY>=r+1 && mouseY<=height-r-1){
             if(l==0 || !counters[l-1].moving){
                 if(addRed){
                     let c = new Counter(mouseX, mouseY, r, 255, 0, 0);
