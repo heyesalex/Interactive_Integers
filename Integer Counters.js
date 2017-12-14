@@ -4,138 +4,162 @@ var dy;
 var l = counters.length;
 var toHighlight;
 var toFade;
-var oneZero;
 var dispA = settings.initRed;
 var dispB = settings.initBlue;
 var dispTot = dispA-dispB;
 var h1;
-var addRed = true;
-var colourButton;
+var toFade = [];
+
+var addingRed = true;
+
+var Red = {
+    R: 232,
+    G: 76,
+    B: 61
+}
+
+var Blue = {
+    R: 53,
+    G: 152,
+    B: 220
+}
+
+var rStack = [];
+var bStack = [];
+var topBlue;
+var topRed;
 
 
 function setup() {
-	createCanvas(setWidth, setHeight);
-	let tot = settings.initRed+settings.initBlue;
-	
-//Define initial array of counters    
-    for(let i=0 ; i< tot; i++){
-	   
+
+    var canvas = createCanvas(setWidth, setHeight);
+
+    let tot = settings.initRed+settings.initBlue;
+
+    //Create the "bank" stacks on either side
+    if(settings.addCounters){
+        createCounterStacks(10, 10, 10);
+    }
+
+    //Define initial array of red and blue counters, based on settings    
+    for(let i=0 ; i < tot ; i++){
+
+        //Set colour of i'th counter
         let col;
         if(i<settings.initRed){
-            col = 0;
+            col = Red;
         } else {
-            col = 1;
+            col = Blue;
         }
-        let c = new Counter(i*100+100, random(100, height-100), r, (1-col)*255, 0, col*255);
+
+        let spacing = Math.floor((width-bStack.width-rStack.width-4*r)/(tot-1));
+
+        let c = new Counter(i*spacing+bStack.width+2*r, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
+
         l = counters.push(c);
     }
-    
-    if(settings.addCounters){
-        colourButton = createButton('Add Blue Counters');
-        colourButton.style('background-colour', (255, 0, 0));
-        colourButton.style('colour', 'white');
-        colourButton.style('text-align', 'center');
-        colourButton.style('display', 'inline-block');
-        colourButton.style('font-size', '20px');
-        colourButton.mousePressed(changeColour)
-    }
 
-    
-//Define Equation Display as html element
+    //Define Equation Display as html element
     if(settings.displayEquation){
+        createP('');
         h1 = createElement('h1' , dispA+'+(-'+dispB + ')=' + dispTot);    
     }
-    
 }
 
-if(settings.addCounters){
-    function changeColour(){
-        addRed = !addRed;
-        if(addRed){
-         colourButton.html('Add Blue Counters');
-        } else {
-         colourButton.html('Add Red Counters');
-        }
-    }
-}
+
+
+
 
 
 function draw(){
-    
+
     background(255);    
     cursor(ARROW);
-    
-//Looking at each counter in the array in turn, from bottom to top.
-    for(let i=0 ; i<l ; i++){
-            
-//Check if counters should be highlighted.
+
+    //Draw the "bank" stacks on either side, excluding the top counter
+    for(let i=0 ; i < rStack.length ; i++){
         push();
-        if(l>0){
-            if(counters[l-1].highlighted){
-               if(i==toHighlight || i==l-1){
-                   counters[i].highlight();
-               }
-            }
-        }
-        
-//Check if counters should be fading out. 
-        if(counters[i].fading){
-            noStroke();
-            counters[i].fade();
+        bStack[i].show();
+        rStack[i].show();      
+        pop();
+    }    
+
+    //Draw a very lazy wash-out rectangle over the "banked" counters... wow this is lazy. 
+    push();
+    fill(255, 100);
+    noStroke();
+    rectMode(CENTER);
+    rect(topBlue.x, height/2, 2*r, height);
+    rect(topRed.x, height/2, 2*r, height);
+    pop();
+
+
+    //If there is a top counter and its moving, check its highlighting
+    if(counters[l-1] && counters[l-1].moving){
+
+        //If moving counter overlaps another of opposite colour, both are highlighted
+        for(let i = l-2 ; i>=0 ; i--){
             
-//If fully faded, remove counter from array and update array length.
-            if(counters[i].alpha <=0){
-                counters.splice(i, 1);
-                i--;
-                l=counters.length;
-                pop();
+            toFade = [];
+            
+            if(counters[l-1].overlap(counters[i]) && counters[l-1].col != counters[i].col && !toFade.includes(i)){
+                
+                counters[l-1].highlighted = true;
+                counters[i].highlighted = true;
+
+                //Set counters i and l-1 as marked to fade out
+                toFade = [i, l-1];
+                break;
+            } else {
                 continue;
             }
-        }
             
-//Draw counters.
-        if(counters[i].touching(mouseX, mouseY)){
-            cursor(HAND)
-               }
-        if(counters[l-1].moving){
-            cursor(MOVE)
         }
-        counters[i].show();
-        pop();
-        
-//Update red and blue count for display.
-        if(settings.displayEquation){
-            if(counters[i].alpha == 255){	
-                if(counters[i].R==255){
-                    dispA++;
-                }
-                if(counters[i].B==255){
-                    dispB++;
+    }
+
+    //If there are no counters, or none moving, check to see if were're hovering over the bank counters
+    if(!counters[l-1] || !counters[l-1].moving){
+
+        let bank = {};
+
+        if(topBlue.touching(mouseX, mouseY)){
+            bank.counter = topBlue;
+        } else if(topRed.touching(mouseX, mouseY)){
+            bank.counter = topRed;
+        }
+
+        if(bank.counter){
+            bank.highlight = true;
+
+            if(counters.length != 0){
+                for(let i = l-1 ; i >= 0 ; i--){
+                    if(counters[i].touching(mouseX, mouseY)){
+                        bank.highlight = false;
+                        break;
+                    }
                 }
             }
+
+            if(bank.highlight){
+                bank.counter.highlighted = true;
+                push();
+                bank.counter.show();
+                pop();
+            }
         }
+        //Reset highlighting
+        bank = {};
+        topBlue.highlighted = false;
+        topRed.highlighted = false;
     }
-    
-//Update displayed equation
-    if(settings.displayEquation){
-        dispTot = dispA - dispB;
-        if(dispB==0){
-            h1.html(dispA+'+'+dispB + '=' + dispTot)
-        } else {
-            h1.html(dispA+'+(-'+dispB + ')=' + dispTot)
-        }
-    //Reset displayed equation
-        dispA = 0;
-        dispB = 0;
-    }
-    
-    
-//  Move counter within boundaries.
-    if(l>0){
+
+
+    //  Update moving counter's position
+    if(counters.length != 0){
         if(counters[l-1].moving){             
             counters[l-1].drag(mouseX+dx, mouseY+dy);
         }
-        
+
         if(counters[l-1].x<=r+1){
             counters[l-1].x = r+1;
         }
@@ -149,20 +173,69 @@ function draw(){
             counters[l-1].y = height-r-1;
         }       
     }
-    
- //Check if overlapping. Set highlighting as true, set toHighlight as i, and break.
-    if(l>0){
-        if(counters[l-1].moving){
-            for(let i=l-2 ; i>=0 ; i--){
-                counters[l-1].highlighted = false;            
-                if(counters[l-1].overlap(counters[i].x, counters[i].y) && !counters[i].fading && (abs(counters[l-1].B - counters[i].B)==255)){
-                    counters[l-1].highlighted = true;
-                    toHighlight = i;
-                    break;
+
+
+    //Update each counter in turn, from 'bottom' to 'top'
+    for(let i=0 ; i<counters.length ; i++){
+        push();
+
+        //Update fading counters
+        if(counters[i].fading){
+            counters[i].fade();
+
+            //If fully faded, remove counter from array and update array length.
+            if(counters[i].alpha <= 0){
+                counters.splice(i, 1);
+                i--;
+                l = counters.length;
+                pop();
+                continue;
+            }
+        }
+
+        //Draw counters
+        counters[i].show();
+
+        //reset highlighting
+        counters[i].highlighted = false;
+        pop();
+
+        //Update red and blue count for displayed equation
+        if(settings.displayEquation){
+            if(counters[i].fading == false){	
+                switch(counters[i].col.R){
+                    case Red.R: dispA++;
+                        break;
+                    case Blue.R: dispB++;
+                        break;
                 }
             }
         }
+
+
+        //Update cursor
+        if(counters[l-1].moving){
+            cursor(MOVE);
+        } else if(counters[i].touching(mouseX, mouseY) || topBlue.touching(mouseX, mouseY)){
+            cursor(HAND);
+        } 
     }
+
+
+
+    //Update displayed equation
+    if(settings.displayEquation){
+        dispTot = dispA - dispB;
+        if(dispB==0){
+            h1.html(dispA+'+'+dispB + '=' + dispTot)
+        } else {
+            h1.html(dispA+'+(-'+dispB + ')=' + dispTot)
+        }
+    }
+
+    //Reset count of red and blue counters
+    dispA = 0;
+    dispB = 0;
 }
 
 
@@ -170,49 +243,74 @@ function draw(){
 
 
 
+
+//When mouse is pressed, we check to move counters, or add counters
 function mousePressed(){
     if(mouseButton == LEFT){
-    
-//If click inside, define dx, dy as position of counter relative to mouse. Move to end of array. 
-        for(i = l-1 ; i>=0 ; i--){
+
+        let isSomethingMoving = false;
+
+        //If clicking inside an existing counter, define dx, dy as position of counter relative to mouse, and move to end of counters array (this is the 'top' counter, as it's the last drawn) 
+        for(let i = l-1 ; i >= 0 ; i--){            
             if((counters[i].touching(mouseX, mouseY)) && (!counters[i].fading)){
-                if(top!==l-1){
-                    counters.push(counters.splice(i, 1)[0]);
-                }
-                counters[l-1].moving = true;
-                dx = counters[l-1].x - mouseX;
-                dy = counters[l-1].y - mouseY;
+
+                counters[i].moving = true;
+                isSomethingMoving = true;
+
+                //Store relative position between mouse and counters centre
+                dx = counters[i].x - mouseX;
+                dy = counters[i].y - mouseY;
+
+                //Move counter to the end of the array
+                counters.push(counters.splice(i, 1)[0]);                
+
                 break;
             }
         }
-        if(settings.addCounters && mouseX>=r+1 && mouseX<=width-r-1 && mouseY>=r+1 && mouseY<=height-r-1){
-            if(l==0 || !counters[l-1].moving){
-                if(addRed){
-                    let c = new Counter(mouseX, mouseY, r, 255, 0, 0);
-                    l = counters.push(c);
-                    counters[l-1].moving = true;
-                    dx=0;
-                    dy=0;
-                } else {
-                    let c = new Counter(mouseX, mouseY, r, 0, 0, 255);
-                    l = counters.push(c);
-                    counters[l-1].moving = true;
-                    dx=0;
-                    dy=0;                
-                }
+
+        if(!isSomethingMoving){
+            //If clicking inside the top of a bank stack, create a new counter of that colour
+
+            let bank = {};
+
+            if(topBlue.touching(mouseX, mouseY)){
+                bank.counter = topBlue;
+            } else if(topRed.touching(mouseX, mouseY)){
+                bank.counter = topRed;
             }
+
+            if(bank.counter){
+                let col = bank.counter.col;
+                let c = new Counter(bank.counter.x, bank.counter.y, r, col);
+                c.moving = true;
+                dx = 0;
+                dy = 0;
+                counters.push(c);
+                l = counters.length;
+            }
+            //Reset bank details
+            bank = {};
         }
+
     }
 }
 
+
 function mouseReleased(){
-    if(l>0){
-        counters[l-1].moving = false;
-        if(counters[l-1].highlighted){
-            toFade=toHighlight;
-            counters[toFade].fading = true;
-            counters[l-1].fading = true;
+    
+    //If there are any counters, everything should stop moving, and those set toFade should start fading
+    if(counters.length != 0){
+
+        for(let i = 0 ; i < toFade.length ; i++){
+            counters[toFade[i]].fading = true;
         }
+        
+        //Reset counters toFade
+        toFade = [];
+        
+        //Stop counters moving and being highlighted
+        counters[l-1].moving = false;
         counters[l-1].highlighted = false;
+        
     }
 }
