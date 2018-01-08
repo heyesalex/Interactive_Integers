@@ -24,6 +24,12 @@ var Blue = {
     B: 220
 }
 
+var Orange = {
+    R: 251,
+    G: 102, 
+    B: 17
+}
+
 var rStack = [];
 var bStack = [];
 var topBlue;
@@ -35,10 +41,25 @@ function setup() {
     var canvas = createCanvas(setWidth, setHeight);
 
     let tot = settings.initRed+settings.initBlue;
+    
+    //If required, create the "bank" stacks on either side
+    if(settings.addCounters || settings.subtractCounters){   
+    
+        for(let i=0 ; i < 10 ; i++){
 
-    //Create the "bank" stacks on either side
-    if(settings.addCounters){
-        createCounterStacks(10, 10, 10);
+            let newB = new Counter(width-r-10, height-50-i*10, r, Blue);
+            let newR = new Counter(r+10, height-50-i*10, r, Red);
+
+            if(i === 9){
+                topBlue = newB;
+                topRed = newR;
+            }
+
+            bStack.push(newB);
+            rStack.push(newR);
+            bStack.width = 2*r+20;
+            rStack.width = 2*r+20;
+        }
     }
 
     //Define initial array of red and blue counters, based on settings    
@@ -51,10 +72,17 @@ function setup() {
         } else {
             col = Blue;
         }
+        
+        let margin;
+        if(settings.addCounters || settings.subtractCounters){
+            margin = bStack.width+2*r 
+        } else {
+            margin = 2*r;
+        }
 
-        let spacing = Math.floor((width-bStack.width-rStack.width-4*r)/(tot-1));
+        let spacing = Math.floor((width-2*margin)/(tot-1))
 
-        let c = new Counter(i*spacing+bStack.width+2*r, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
+        let c = new Counter(i*spacing+margin, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
 
         l = counters.push(c);
     }
@@ -62,7 +90,7 @@ function setup() {
     //Define Equation Display as html element
     if(settings.displayEquation){
         createP('');
-        h1 = createElement('h1' , dispA+'+(-'+dispB + ')=' + dispTot);    
+        h1 = createElement('h1' , dispA+' + (-'+dispB + ') = ' + dispTot);    
     }
 }
 
@@ -75,82 +103,105 @@ function draw(){
 
     background(255);    
     cursor(ARROW);
+    toFade = [];
 
     //Draw the "bank" stacks on either side, excluding the top counter
-    for(let i=0 ; i < rStack.length ; i++){
-        push();
-        bStack[i].show();
-        rStack[i].show();      
-        pop();
-    }    
+    if(settings.addCounters || settings.subtractCounters){
+        for(let i=0 ; i < rStack.length ; i++){
+            push();
+            bStack[i].show();
+            rStack[i].show();      
+            pop();
+        }   
+    
 
     //Draw a very lazy wash-out rectangle over the "banked" counters... wow this is lazy. 
-    push();
-    fill(255, 100);
-    noStroke();
-    rectMode(CENTER);
-    rect(topBlue.x, height/2, 2*r, height);
-    rect(topRed.x, height/2, 2*r, height);
-    pop();
+        push();
+        fill(255, 100);
+        noStroke();
+        rectMode(CENTER);
+        rect(topBlue.x, height/2, 2*r, height);
+        rect(topRed.x, height/2, 2*r, height);
+        pop();
+    }
 
 
     //If there is a top counter and its moving, check its highlighting
     if(counters[l-1] && counters[l-1].moving){
 
-        //If moving counter overlaps another of opposite colour, both are highlighted
-        for(let i = l-2 ; i>=0 ; i--){
-            
-            toFade = [];
-            
-            if(counters[l-1].overlap(counters[i]) && counters[l-1].col != counters[i].col && !toFade.includes(i)){
-                
-                counters[l-1].highlighted = true;
-                counters[i].highlighted = true;
 
-                //Set counters i and l-1 as marked to fade out
-                toFade = [i, l-1];
-                break;
+        //If moving counter overlaps another of opposite colour, both are highlighted ORANGE
+        let overlapping = false;
+        for(let i = l-2 ; i>=0 ; i--){
+
+            if(counters[l-1].overlap(counters[i])){
+                overlapping = true;
             } else {
                 continue;
             }
             
+            if(counters[l-1].col != counters[i].col){
+                counters[l-1].highlight(Orange);
+                counters[i].highlight(Orange);
+            
+                //Set counters i and l-1 as marked to fade out
+                toFade = [i, l-1];
+                break;
+            }
+        }
+
+        //If moving counter is overlapping corresponding stack, highlight BLUE for subtraction, and set to fade
+        if(!overlapping && settings.subtractCounters){        
+            if(counters[l-1].overlap(topBlue) && counters[l-1].col == Blue){
+                
+                counters[l-1].highlight(Blue);
+                toFade = [l-1];
+                
+            } else if(counters[l-1].overlap(topRed) && counters[l-1].col == Red){            
+                counters[l-1].highlight(Blue);
+                toFade = [l-1];
+                
+            }
         }
     }
 
+
     //If there are no counters, or none moving, check to see if were're hovering over the bank counters
-    if(!counters[l-1] || !counters[l-1].moving){
+    if(settings.addCounters){
+        if(!counters[l-1] || !counters[l-1].moving){
 
-        let bank = {};
+            let bank = {};
 
-        if(topBlue.touching(mouseX, mouseY)){
-            bank.counter = topBlue;
-        } else if(topRed.touching(mouseX, mouseY)){
-            bank.counter = topRed;
-        }
+            if(topBlue.touching(mouseX, mouseY)){
+                bank.counter = topBlue;
+            } else if(topRed.touching(mouseX, mouseY)){
+                bank.counter = topRed;
+            }
 
-        if(bank.counter){
-            bank.highlight = true;
+            if(bank.counter){
+                bank.highlight = true;
 
-            if(counters.length != 0){
-                for(let i = l-1 ; i >= 0 ; i--){
-                    if(counters[i].touching(mouseX, mouseY)){
-                        bank.highlight = false;
-                        break;
+                if(counters.length != 0){
+                    for(let i = l-1 ; i >= 0 ; i--){
+                        if(counters[i].touching(mouseX, mouseY)){
+                            bank.highlight = false;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if(bank.highlight){
-                bank.counter.highlighted = true;
-                push();
-                bank.counter.show();
-                pop();
+                if(bank.highlight){
+                    bank.counter.highlight(Red);
+                    push();
+                    bank.counter.show();
+                    pop();
+                }
             }
+            //Reset highlighting
+            bank = {};
+            topBlue.highlighted = false;
+            topRed.highlighted = false;
         }
-        //Reset highlighting
-        bank = {};
-        topBlue.highlighted = false;
-        topRed.highlighted = false;
     }
 
 
@@ -216,9 +267,11 @@ function draw(){
         //Update cursor
         if(counters[l-1].moving){
             cursor(MOVE);
-        } else if(counters[i].touching(mouseX, mouseY) || topBlue.touching(mouseX, mouseY)){
+        } else if(counters[i].touching(mouseX, mouseY)){
             cursor(HAND);
-        } 
+        } else if(settings.addCounters && (topBlue.touching(mouseX, mouseY) || topRed.touching(mouseX, mouseY))){
+            cursor(HAND);
+        }
     }
 
 
@@ -227,9 +280,9 @@ function draw(){
     if(settings.displayEquation){
         dispTot = dispA - dispB;
         if(dispB==0){
-            h1.html(dispA+'+'+dispB + '=' + dispTot)
+            h1.html(dispA+' + '+dispB + ' = ' + dispTot)
         } else {
-            h1.html(dispA+'+(-'+dispB + ')=' + dispTot)
+            h1.html(dispA+' + (-'+dispB + ') = ' + dispTot)
         }
     }
 
@@ -268,7 +321,7 @@ function mousePressed(){
             }
         }
 
-        if(!isSomethingMoving){
+        if(!isSomethingMoving && settings.addCounters){
             //If clicking inside the top of a bank stack, create a new counter of that colour
 
             let bank = {};
@@ -297,20 +350,20 @@ function mousePressed(){
 
 
 function mouseReleased(){
-    
+
     //If there are any counters, everything should stop moving, and those set toFade should start fading
     if(counters.length != 0){
 
         for(let i = 0 ; i < toFade.length ; i++){
             counters[toFade[i]].fading = true;
         }
-        
-        //Reset counters toFade
+
+        //Reset counters in toFade
         toFade = [];
-        
+
         //Stop counters moving and being highlighted
         counters[l-1].moving = false;
         counters[l-1].highlighted = false;
-        
+
     }
 }
