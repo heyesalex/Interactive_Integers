@@ -9,6 +9,7 @@ class Counter{
         this.moving = false;
         this.highlighted = false;
         this.fading = false;
+        this.highlighting = {R: 0, G:0, B:0};
         
         if(!alpha){
             this.alpha = 255;
@@ -24,7 +25,7 @@ class Counter{
             noStroke();
         } else if(this.highlighted){
             strokeWeight(6);
-            stroke(251, 102, 17, this.alpha);
+            stroke(this.highlighting.R, this.highlighting.G, this.highlighting.B, this.alpha);
         }
         
         fill(this.col.R, this.col.G, this.col.B, this.alpha);
@@ -51,5 +52,10 @@ class Counter{
     
     fade(){
             this.alpha-=10;
+    }
+    
+    highlight(col){ 
+        this.highlighted = true;
+        this.highlighting = col;
     }
 }
