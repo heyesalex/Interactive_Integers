@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    color: blue;
+}
+
+button: focus{
+    outline: none;
+}
+
+button{
+    padding: 16px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size:16px;
+    color: white;
+}
