@@ -76,7 +76,7 @@ function setup() {
             col = Blue;
         }
         
-        let margin;
+        var margin;
         if(settings.addCounters || settings.subtractCounters){
             margin = 20+3*r 
         } else {
@@ -85,10 +85,10 @@ function setup() {
         
         var spacing = 0;
         if(tot>1){
-            spacing = Math.floor((width-2*margin)/(tot-1));
+            spacing = Math.floor((width-2*margin)/(tot+Math.pow(-1, i%2)));
         }
         
-        let c = new Counter((i-(tot-1)/2)*spacing+width/2, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
+        let c = new Counter(width/2+Math.floor((i-(tot-1)/2))*spacing, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
 
         l = counters.push(c);
     }
