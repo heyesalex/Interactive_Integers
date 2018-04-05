@@ -7,7 +7,6 @@ var toFade;
 var dispA = settings.initRed;
 var dispB = settings.initBlue;
 var dispTot = dispA-dispB;
-var h1;
 var toFade = [];
 
 var addingRed = true;
@@ -34,13 +33,17 @@ var rStack = [];
 var bStack = [];
 var topBlue;
 var topRed;
-
+var h1;
 
 function setup() {
+    
+    var centeringDiv = createDiv('');
+    centeringDiv.style("text-align","center");
 
     var canvas = createCanvas(setWidth, setHeight);
+    canvas.parent(centeringDiv);
 
-    let tot = settings.initRed+settings.initBlue;
+    var tot = settings.initRed+settings.initBlue;
     
     //If required, create the "bank" stacks on either side
     if(settings.addCounters || settings.subtractCounters){   
@@ -90,14 +93,10 @@ function setup() {
     //Define Equation Display as html element
     if(settings.displayEquation){
         createP('');
-        h1 = createElement('h1' , dispA+' + (-'+dispB + ') = ' + dispTot);    
+        h1 = createElement('h1' , dispA+' + (-'+dispB + ') = ' + dispTot);
+        h1.parent(centeringDiv);        
     }
 }
-
-
-
-
-
 
 function draw(){
 
@@ -113,7 +112,6 @@ function draw(){
             rStack[i].show();      
             pop();
         }   
-    
 
     //Draw a very lazy wash-out rectangle over the "banked" counters... wow this is lazy. 
         push();
@@ -124,7 +122,6 @@ function draw(){
         rect(topRed.x, height/2, 2*r, height);
         pop();
     }
-
 
     //If there is a top counter and its moving, check its highlighting
     if(counters[l-1] && counters[l-1].moving){
@@ -165,7 +162,6 @@ function draw(){
         }
     }
 
-
     //If there are no counters, or none moving, check to see if were're hovering over the bank counters
     if(settings.addCounters){
         if(!counters[l-1] || !counters[l-1].moving){
@@ -204,7 +200,6 @@ function draw(){
         }
     }
 
-
     //  Update moving counter's position
     if(counters.length != 0){
         if(counters[l-1].moving){             
@@ -224,7 +219,6 @@ function draw(){
             counters[l-1].y = height-r-1;
         }       
     }
-
 
     //Update each counter in turn, from 'bottom' to 'top'
     for(let i=0 ; i<counters.length ; i++){
@@ -263,7 +257,6 @@ function draw(){
             }
         }
 
-
         //Update cursor
         if(counters[l-1].moving){
             cursor(MOVE);
@@ -274,11 +267,10 @@ function draw(){
         }
     }
 
-
-
     //Update displayed equation
     if(settings.displayEquation){
         dispTot = dispA - dispB;
+        
         if(dispB==0){
             h1.html(dispA+' + '+dispB + ' = ' + dispTot)
         } else {
@@ -290,12 +282,6 @@ function draw(){
     dispA = 0;
     dispB = 0;
 }
-
-
-
-
-
-
 
 //When mouse is pressed, we check to move counters, or add counters
 function mousePressed(){
@@ -347,7 +333,6 @@ function mousePressed(){
 
     }
 }
-
 
 function mouseReleased(){
 
