@@ -78,14 +78,17 @@ function setup() {
         
         let margin;
         if(settings.addCounters || settings.subtractCounters){
-            margin = bStack.width+2*r 
+            margin = 20+3*r 
         } else {
             margin = 2*r;
         }
-
-        let spacing = Math.floor((width-2*margin)/(tot-1))
-
-        let c = new Counter(i*spacing+margin, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
+        
+        var spacing = 0;
+        if(tot>1){
+            spacing = Math.floor((width-2*margin)/(tot-1));
+        }
+        
+        let c = new Counter((i-(tot-1)/2)*spacing+width/2, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
 
         l = counters.push(c);
     }
