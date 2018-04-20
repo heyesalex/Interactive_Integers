@@ -347,10 +347,12 @@ function moveCounter(){
 
 function mouseReleased(){
     releaseCounter();
+    return false;
 }
 
 function touchEnded(){
     releaseCounter;
+    return false;
 }
 
 function releaseCounter(){
