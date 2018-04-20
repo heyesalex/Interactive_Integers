@@ -351,7 +351,7 @@ function mouseReleased(){
 }
 
 function touchEnded(){
-    releaseCounter;
+    releaseCounter();
     return false;
 }
 
