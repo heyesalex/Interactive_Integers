@@ -36,7 +36,7 @@ var topRed;
 var h1;
 
 function setup() {
-    
+
     var centeringDiv = createDiv('');
     centeringDiv.style("text-align","center");
 
@@ -44,10 +44,10 @@ function setup() {
     canvas.parent(centeringDiv);
 
     var tot = settings.initRed+settings.initBlue;
-    
+
     //If required, create the "bank" stacks on either side
     if(settings.addCounters || settings.subtractCounters){   
-    
+
         for(let i=0 ; i < 10 ; i++){
 
             let newB = new Counter(width-r-10, height-50-i*10, r, Blue);
@@ -75,17 +75,20 @@ function setup() {
         } else {
             col = Blue;
         }
-        
-        let margin;
+
+        var margin;
         if(settings.addCounters || settings.subtractCounters){
-            margin = bStack.width+2*r 
+            margin = 10+3*r 
         } else {
             margin = 2*r;
         }
 
-        let spacing = Math.floor((width-2*margin)/(tot-1))
+        var spacing = 0;
+        if(tot>1){
+            spacing = Math.floor((width-2*margin)/(tot+1-(2*tot%2)));
+        }
 
-        let c = new Counter(i*spacing+margin, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
+        let c = new Counter(width/2+(i-(tot-1)/2)*spacing, random((i%2)/2*height+r, (1+i%2)/2*height-r), r, col, 255);
 
         l = counters.push(c);
     }
@@ -113,7 +116,7 @@ function draw(){
             pop();
         }   
 
-    //Draw a very lazy wash-out rectangle over the "banked" counters... wow this is lazy. 
+        //Draw a very lazy wash-out rectangle over the "banked" counters... wow this is lazy. 
         push();
         fill(255, 100);
         noStroke();
@@ -136,11 +139,11 @@ function draw(){
             } else {
                 continue;
             }
-            
+
             if(counters[l-1].col != counters[i].col){
                 counters[l-1].highlight(Orange);
                 counters[i].highlight(Orange);
-            
+
                 //Set counters i and l-1 as marked to fade out
                 toFade = [i, l-1];
                 break;
@@ -150,14 +153,14 @@ function draw(){
         //If moving counter is overlapping corresponding stack, highlight BLUE for subtraction, and set to fade
         if(!overlapping && settings.subtractCounters){        
             if(counters[l-1].overlap(topBlue) && counters[l-1].col == Blue){
-                
+
                 counters[l-1].highlight(Blue);
                 toFade = [l-1];
-                
+
             } else if(counters[l-1].overlap(topRed) && counters[l-1].col == Red){            
                 counters[l-1].highlight(Blue);
                 toFade = [l-1];
-                
+
             }
         }
     }
@@ -270,7 +273,7 @@ function draw(){
     //Update displayed equation
     if(settings.displayEquation){
         dispTot = dispA - dispB;
-        
+
         if(dispB==0){
             h1.html(dispA+' + '+dispB + ' = ' + dispTot)
         } else {
@@ -285,6 +288,14 @@ function draw(){
 
 //When mouse is pressed, we check to move counters, or add counters
 function mousePressed(){
+    moveCounter();
+}
+
+function touchStarted(){
+    moveCounter();    
+}
+
+function moveCounter(){
     if(mouseButton == LEFT){
 
         let isSomethingMoving = false;
@@ -335,6 +346,16 @@ function mousePressed(){
 }
 
 function mouseReleased(){
+    releaseCounter();
+    return false;
+}
+
+function touchEnded(){
+    releaseCounter();
+    return false;
+}
+
+function releaseCounter(){
 
     //If there are any counters, everything should stop moving, and those set toFade should start fading
     if(counters.length != 0){
