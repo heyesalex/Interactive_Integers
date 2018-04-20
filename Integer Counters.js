@@ -288,12 +288,10 @@ function draw(){
 
 //When mouse is pressed, we check to move counters, or add counters
 function mousePressed(){
-    preventDefault();
     moveCounter();
 }
 
 function touchStarted(){
-    preventDefault();
     moveCounter();    
 }
 
