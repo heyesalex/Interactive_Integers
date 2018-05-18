@@ -54,7 +54,8 @@ class Counter{
             textAlign(CENTER, CENTER);
             fill(68, this.alpha);
             if(this.string == '-'){
-                text(this.string, this.x, this.y-5);   
+                text(this.string, this.x-5, this.y-5); 
+                text(this.string, this.x+5, this.y-5);  
             } else {
                 text(this.string, this.x, this.y);   
             }
