@@ -327,7 +327,7 @@ function touchStarted(){
 }
 
 function moveCounter(){
-    if(!(mouseButton && mouseButton == LEFT)){
+    if(!(mouseButton && mouseButton == RIGHT)){
         let isSomethingMoving = false;
 
         //If clicking inside an existing counter, define dx, dy as position of counter relative to mouse, and move to end of counters array (this is the 'top' counter, as it's the last drawn) 
