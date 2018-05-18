@@ -1,7 +1,7 @@
 class Counter{
 
 //Each counter is an ellipse with centre (x, y), radius r, colour RGB, and it knows if it should be moving. 
-    constructor(x, y, r, col, alpha){
+    constructor(x, y, r, col, alpha, string){
         this.x=x;
         this.y=y;
         this.r=r;
@@ -16,20 +16,45 @@ class Counter{
         } else {
             this.alpha = alpha;
         }
+       
+        if(string){
+            this.string = string;
+        } else {
+            this.string = '';
+        }
     }
     
 //Each ellipse gets drawn with its specified colour.    
     show(){
         
+        //This is effectively a dropshadow
+        //this.col.R, this.col.G, this.col.B
+//        noStroke();
+        fill(100, this.alpha);
+        ellipse(this.x, this.y+3, 2*this.r-1); 
+        
         if(this.fading){
             noStroke();
         } else if(this.highlighted){
-            strokeWeight(6);
+            strokeWeight(7);
             stroke(this.highlighting.R, this.highlighting.G, this.highlighting.B, this.alpha);
-        }
+        }  
+        
         
         fill(this.col.R, this.col.G, this.col.B, this.alpha);
         ellipse(this.x, this.y, 2*this.r);
+        
+        if(this.string){
+            noStroke();
+            textSize(50);
+            textAlign(CENTER, CENTER);
+            fill(0, this.alpha);
+            if(this.string == '-'){
+                text(this.string, this.x, this.y-5);   
+            } else {
+                text(this.string, this.x, this.y);   
+            }
+        }      
     }
 
 //This moves the counter by redefining its position.   
