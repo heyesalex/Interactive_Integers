@@ -63,7 +63,7 @@ function setup() {
     if(settings.addBlueCounters || settings.subtractBlueCounters){   
         blueStack = [];
         for(let i=0 ; i < stackNumber ; i++){
-            let newB = new Counter(width-r-10, height-50-i*stackSpacing, r, Blue, 255, '−');
+            let newB = new Counter(width-r-10, height-50-i*stackSpacing, r, Blue, 255, '-');
             blueStack.push(newB);
             if(i === stackNumber-1){
                 topBlue = newB;
@@ -98,7 +98,7 @@ function setup() {
             string = '+';
         } else {
             col = Blue;
-            string = '−';
+            string = '-';
         }
 
         //Counter y position random, alternates between top and bottom half
