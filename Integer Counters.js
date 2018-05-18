@@ -350,7 +350,6 @@ function moveCounter(){
 
         if(!isSomethingMoving && (settings.addRedCounters || settings.addBlueCounters)){
             //If clicking inside the top of a bank stack, create a new counter of that colour
-
             let bankCounter = undefined;
 
             if(settings.addBlueCounters && topBlue.touching(mouseX, mouseY)){
@@ -363,8 +362,8 @@ function moveCounter(){
                 let col = bankCounter.col;
                 let c = new Counter(bankCounter.x, bankCounter.y, r, col);
                 c.moving = true;
-                dx = 0;
-                dy = 0;
+                dx = bankCounter.x - mouseX;
+                dy = bankCounter.y-mouseY;
                 counters.push(c);
                 l = counters.length;
             }
