@@ -46,26 +46,26 @@ function setup() {
     var tot = settings.initialRedCounters+settings.initialBlueCounters;
 
     //If required, define the "bank" stacks on either side
-
+    var stackNumber = 10;
+    var stackSpacing = 5;
     //Define the red stack
     if(settings.addRedCounters ||  settings.subtractRedCounters){
         redStack = [];
-        for(let i=0 ; i < 10 ; i++){
-            let newR = new Counter(r+10, height-50-i*10, r, Red, 255, '+');
+        for(let i=0 ; i < stackNumber ; i++){
+            let newR = new Counter(r+10, height-50-i*stackSpacing, r, Red, 255, '+');
             redStack.push(newR);
-            if(i === 9){
+            if(i === stackNumber-1){
                 topRed = newR;
             }
         }
     }
-
     //Define the blue stack
     if(settings.addBlueCounters || settings.subtractBlueCounters){   
         blueStack = [];
-        for(let i=0 ; i < 10 ; i++){
-            let newB = new Counter(width-r-10, height-50-i*10, r, Blue, 255, '-');
+        for(let i=0 ; i < stackNumber ; i++){
+            let newB = new Counter(width-r-10, height-50-i*stackSpacing, r, Blue, 255, '−');
             blueStack.push(newB);
-            if(i === 9){
+            if(i === stackNumber-1){
                 topBlue = newB;
             }
         }
@@ -98,7 +98,7 @@ function setup() {
             string = '+';
         } else {
             col = Blue;
-            string = '-';
+            string = '−';
         }
 
         //Counter y position random, alternates between top and bottom half
@@ -157,14 +157,14 @@ function draw(){
         pop();
     }
 
-    
+
 
     //If there is a top counter and it's moving, look to cancel or subtract
     if(counters[l-1] && counters[l-1].moving){
         //If moving counter overlaps another of opposite colour, both are highlighted ORANGE
         let overlappingFreeCounter = false;
         for(let i = l-2 ; i>=0 ; i--){
-            if(counters[l-1].overlap(counters[i])){
+            if(!counters[i].fading && counters[l-1].overlap(counters[i])){
                 overlappingFreeCounter = true;
             } else {
                 continue;
@@ -182,14 +182,14 @@ function draw(){
             if(settings.subtractBlueCounters && counters[l-1].col == Blue && counters[l-1].overlap(topBlue)){
                 counters[l-1].highlight(Blue);
                 toFade = [l-1];
+            } else if(settings.subtractRedCounters && counters[l-1].col == Red && counters[l-1].overlap(topRed)){
+                counters[l-1].highlight(Blue);
+                toFade = [l-1];
             }
-        } else if(settings.subtractRedCounters && counters[l-1].col == Red && counters[l-1].overlap(topRed)){
-            counters[l-1].highlight(Blue);
-            toFade = [l-1];
         }
     }
-    
-    
+
+
 
     //If there are no counters, or none moving, check to see if were're hovering over the bank counters
     if(settings.addRedCounters || settings.addBlueCounters){
