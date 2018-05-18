@@ -51,7 +51,7 @@ function setup() {
     if(settings.addRedCounters ||  settings.subtractRedCounters){
         redStack = [];
         for(let i=0 ; i < 10 ; i++){
-            let newR = new Counter(r+10, height-50-i*10, r, Red);
+            let newR = new Counter(r+10, height-50-i*10, r, Red, 255, '+');
             redStack.push(newR);
             if(i === 9){
                 topRed = newR;
@@ -63,7 +63,7 @@ function setup() {
     if(settings.addBlueCounters || settings.subtractBlueCounters){   
         blueStack = [];
         for(let i=0 ; i < 10 ; i++){
-            let newB = new Counter(width-r-10, height-50-i*10, r, Blue);
+            let newB = new Counter(width-r-10, height-50-i*10, r, Blue, 255, '-');
             blueStack.push(newB);
             if(i === 9){
                 topBlue = newB;
@@ -92,17 +92,20 @@ function setup() {
 
         //Set colour of i'th counter
         var col;
+        var string;
         if(i<settings.initialRedCounters){
             col = Red;
+            string = '+';
         } else {
             col = Blue;
+            string = '-';
         }
 
         //Counter y position random, alternates between top and bottom half
         var yposition = random((i%2)/2*height+r, (1+i%2)/2*height-r);  
 
         //Define counters
-        let c = new Counter(width/2+(i-(tot-1)/2)*spacing, yposition, r, col, 255);
+        let c = new Counter(width/2+(i-(tot-1)/2)*spacing, yposition, r, col, 255, string);
 
         //Push to stack and update stack length l
         l = counters.push(c);
@@ -360,7 +363,7 @@ function moveCounter(){
 
             if(bankCounter){
                 let col = bankCounter.col;
-                let c = new Counter(bankCounter.x, bankCounter.y, r, col);
+                let c = new Counter(bankCounter.x, bankCounter.y, r, col, 255, bankCounter.string);
                 c.moving = true;
                 dx = bankCounter.x - mouseX;
                 dy = bankCounter.y-mouseY;
