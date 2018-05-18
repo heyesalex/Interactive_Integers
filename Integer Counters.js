@@ -115,7 +115,8 @@ function setup() {
     if(settings.displayEquation){
         createP('');
         h1 = createElement('h1' , dispA+' + (-'+dispB + ') = ' + dispTot);
-        h1.parent(centeringDiv);        
+        h1.parent(centeringDiv);  
+        h1.style("color", "#444444");
     }
 }
 
@@ -253,7 +254,7 @@ function draw(){
             counters[l-1].y = r+1;
         }
         if(counters[l-1].y>=height-r-1){
-            counters[l-1].y = height-r-1;
+            counters[l-1].y = height-r-3;
         }       
     }
 
