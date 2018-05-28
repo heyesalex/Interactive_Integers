@@ -17,10 +17,14 @@ There are 5 settings, that can be changed using hashes in the url. To change a s
 
 Setting 1: Initial number of Red counters. This setting must be a non-negative integer. If no input is given, or a symbol that isn't a non-negative integer, then there will initially be a random number of red counters (between 1 and 5). 
 
-Setting 1: Initial number of Blue counters. This setting must be a non-negative integer. If no input is given, or a symbol that isn't a non-negative integer, then there will initially be a random number of blue counters (between 1 and 5). 
+Setting 2: Initial number of Blue counters. This setting must be a non-negative integer. If no input is given, or a symbol that isn't a non-negative integer, then there will initially be a random number of blue counters (between 1 and 5). 
 
-Setting 3: Adding counters. This is a Boolean input that controls whether the user can add counters by dragging them from the stack. Inputting 0 means no addition is allowed, and inputting 1 means addition is allowed. By default, this is set to 1, so students can add. 
+Setting 3: Adding Red counters. This is a Boolean input that controls whether the user can add counters by dragging them from the stack. Inputting 0 means no addition is allowed, and inputting 1 means addition is allowed. By default, this is set to 1, so students can add. 
 
-Setting 4: Subtracting counters. This is a Boolean input that controls whether the user can subtract counters by dragging them to the stack. Inputting 0 means no subtraction is allowed, and inputting 1 means subtraction is allowed. By default, this is set to 1, so students can subtract.
+Setting 4: Subtracting Red counters. This is a Boolean input that controls whether the user can subtract counters by dragging them to the stack. Inputting 0 means no subtraction is allowed, and inputting 1 means subtraction is allowed. By default, this is set to 1, so students can subtract.
 
-Setting 5: Displayed equation. This is a Boolean input that controls whether the equation underneath the canvas is displayed. Inputting 0 means no display, and inputting 1 means the equation is displayed. By default, this is set to 1, so the equation is displayed.
+Setting 5: Adding Blue counters. This is a Boolean input that controls whether the user can add counters by dragging them from the stack. Inputting 0 means no addition is allowed, and inputting 1 means addition is allowed. By default, this is set to 1, so students can add.
+
+Setting 6: Subtracting Blue counters. This is a Boolean input that controls whether the user can subtract blue counters by dragging them to the stack. Inputting 0 means no subtraction is allowed, and inputting 1 means subtraction is allowed. By default, this is set to 1, so students can subtract.
+
+Setting 7: Displayed equation. This is a Boolean input that controls whether the equation underneath the canvas is displayed. Inputting 0 means no display, and inputting 1 means the equation is displayed. By default, this is set to 1, so the equation is displayed.
